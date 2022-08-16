@@ -20,8 +20,8 @@ def go(config: DictConfig):
         # This was passed on the command line as a comma-separated list of steps
         steps_to_execute = config["main"]["execute_steps"].split(",")
     else:
-        assert isinstance(config["main"]["execute_steps"], list)
-        steps_to_execute = config["main"]["execute_steps"]
+        # assert isinstance(config["main"]["execute_steps"], list)
+        steps_to_execute = list(config["main"]["execute_steps"])
 
     # Download step
     if "download" in steps_to_execute:
@@ -44,7 +44,7 @@ def go(config: DictConfig):
             "main",
             parameters={
                 "input_artifact": "raw_data.parquet:latest",
-                "artifact_name": "preprocess.csv",
+                "artifact_name": "preprocess_data.csv",
                 "artifact_type": "preprocess_data",
                 "artifact_description": "Preprocessed Data"
             },
@@ -57,7 +57,7 @@ def go(config: DictConfig):
             "main",
             parameters={
                 "reference_artifact": config['data']['reference_dataset'],
-                "sample_artifact": "preprocess_data:latest",
+                "sample_artifact": "preprocess_data.csv:latest",
                 "ks_alpha": config['data']['ks_alpha']
             },
         )
@@ -68,7 +68,7 @@ def go(config: DictConfig):
             os.path.join(root_path, "segregate"),
             "main",
             parameters={
-                "input_artifact": "preprocess_data:latest",
+                "input_artifact": "preprocess_data.csv:latest",
                 "artifact_root": "data",
                 "artifact_type": 'data_split',
                 "test_size": config['data']['test_size'],
